@@ -1,0 +1,72 @@
+name: ps2
+version: 0.1.0
+spec: '0.1'
+kind: ip
+lang: bsv
+identity:
+  slug: ps2-tapeout-bsv
+  display_name: PS/2 host
+  summary: PS/2 host that receives scan codes from a keyboard or mouse and sends
+    it commands.
+  category: peripheral
+  subcategories:
+  - input
+  ip_family: ps2
+  integration_profile:
+  - apb4-slave
+  maturity: simulated
+contract:
+  version: 1
+  ctrl:
+    shape: flat
+    aw: 8
+    dw: 32
+  irq:
+  - name: irq
+    kind: level
+params: {}
+features:
+  # 关掉就只收不发（只读键盘的用法）：少了抑制时钟、请求发送、应答与两个超时
+  tx:
+    type: bool
+    default: true
+    area:
+      fixed: 656.88
+emit:
+- kind: bsv
+  package: Ps2
+  module: mkPs2
+  config_type: Ps2Cfg
+  interface: Ps2Ifc
+  ctrl: regs
+  pins:
+  - name: pins
+    type: Ps2Pins
+- kind: verilog-flat
+  bus: apb4
+deps:
+  hwcore: ^0.1
+  amba: ^0.1
+area:
+  base:
+    fixed: 1108.24
+  margin: 0.0
+  model: points-additive
+  error:
+    bound: 0.0
+    sign: over
+    note: first measured by ran recal --init; every configuration is on the grid
+  measured:
+  - at:
+      tx: false
+    um2: 1108.24
+  - at:
+      tx: true
+    um2: 1765.12
+  corner:
+    tool: ecc
+    pdk: ics55
+    freq_mhz: 100
+    measured: '2026-09-15'
+    toolchain: bsc 2026.01 · yosys 0.68+195 · ecc 0.1.0a11
+    gen_digest: sha256:31cd3db807904771

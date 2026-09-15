@@ -1,0 +1,34 @@
+ip: ps2
+contract: { aw: 8, dw: 32 }
+base: 0x10011000
+size: 0x100
+regs:
+  - name: ctrl
+    offset: 0x00
+    desc: enable and interrupt enable
+    fields:
+      - { name: en,  bits: "0:0", sw: rw, hw: r, reset: 0 }
+      - { name: ien, bits: "1:1", sw: rw, hw: r, reset: 0 }
+  # 一微秒多少拍减一：抑制时钟至少 100 微秒、设备 15 毫秒内出时钟、2 毫秒内发完都按微秒数
+  - name: tick
+    offset: 0x04
+    desc: clock cycles per microsecond, minus one
+    fields: [ { name: val, width: 16, sw: rw, hw: r, reset: 99 } ]
+  - name: rxd
+    offset: 0x08
+    desc: last byte received from the device
+    fields: [ { name: val, bits: "7:0", sw: r, hw: w, volatile: true } ]
+  - name: txd
+    offset: 0x0C
+    desc: write a byte to send it to the device
+    feature: tx
+    fields: [ { name: val, bits: "7:0", sw: w, hw: na, swmod: true, wrdata: true, reset: 0 } ]
+  - name: status
+    offset: 0x10
+    desc: receive and transmit events, and whether a send is under way
+    fields:
+      - { name: rxv,    bits: "0:0", sw: rw, onwrite: woclr, hw: r, hwset: true, stickybit: true, reset: 0 }
+      - { name: rxerr,  bits: "1:1", sw: rw, onwrite: woclr, hw: r, hwset: true, stickybit: true, reset: 0 }
+      - { name: txdone, bits: "2:2", sw: rw, onwrite: woclr, hw: r, hwset: true, stickybit: true, reset: 0, feature: tx }
+      - { name: txerr,  bits: "3:3", sw: rw, onwrite: woclr, hw: r, hwset: true, stickybit: true, reset: 0, feature: tx }
+      - { name: busy,   bits: "4:4", sw: r, hw: w, volatile: true }
