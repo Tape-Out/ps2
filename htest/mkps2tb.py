@@ -72,7 +72,7 @@ verdict = ("a scan code frame is received, a frame cut off halfway is dropped af
 
 TEMPLATE = r'''package Ps2@L@Tb;
 
-// 由 tb/mkps2tb.py 生成，勿手改。这一点：tx=@TXON@
+// 由 htest/mkps2tb.py 生成，勿手改。这一点：tx=@TXON@
 
 import StmtFSM::*;
 import ConfigReg::*;
